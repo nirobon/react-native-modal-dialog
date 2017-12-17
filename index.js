@@ -3,7 +3,7 @@ import React, { Component, PropTypes, Children } from 'react';
 import {
     StyleSheet, Dimensions,
     Text, View, TouchableWithoutFeedback, TextInput, ScrollView,
-    BackHandler
+    BackAndroid
 } from 'react-native';
 
 const StyleSheetPropType = PropTypes.instanceOf(StyleSheet);
@@ -73,7 +73,7 @@ export default class Dialog extends Component {
                 }</ScrollView>
                 <View style={[styles.dialogButtonBar, buttonBarStyle]}>
                     {negText ? <Text
-                        style={[styles.dialogButton, buttonStyle]}
+                        style={[styles.negTextButtom, buttonStyle]}
                         onPress={onNegClick.bind(this)}>
                         {negText}
                     </Text> : null}
@@ -94,10 +94,10 @@ export default class Dialog extends Component {
         this.lock = true;
         this.params = { ...this.props, onCancel: this.onCancel, ...params, };
         this.setState({ hidden: false, });
-        BackHandler.addEventListener('cancelDialog', this.params.onCancel);
+        BackAndroid.addEventListener('cancelDialog', this.params.onCancel);
     }
     hide() {
-        BackHandler.removeEventListener('cancelDialog', this.params.onCancel);
+        BackAndroid.removeEventListener('cancelDialog', this.params.onCancel);
         this.setState({ hidden: true });
         this.lock = false;
         this._lockQueue[0] && this.show(this._lockQueue[0]);
@@ -120,12 +120,14 @@ export default class Dialog extends Component {
     }
     prompt(message, placeholder, onChangeText, params) {
         this.show({
-            title: 'Prompt',
+            title: 'Billing',
             negText: 'Cancel',
+            
             children: [
                 <Text style={[styles.dialogMessage, params && params.messageStyle || this.props.messageStyle]}>{message}</Text>,
                 <TextInput
-                    style={{ height: 40 }}
+                    keyboardType="numeric"
+                    style={{ height: 40, marginLeft:10 }}
                     placeholder={placeholder}
                     onChangeText={onChangeText && onChangeText.bind(this)}
                 />
@@ -242,4 +244,12 @@ const styles = StyleSheet.create({
         marginLeft: 24,
         marginRight: 8,
     },
+    negTextButtom:{
+        textAlign: 'right',
+        color: '#e52325',
+        fontSize: 15,
+        padding: 12,
+        marginLeft: 24,
+        marginRight: 8,
+    }
 });
